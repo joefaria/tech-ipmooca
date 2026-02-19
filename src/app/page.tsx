@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { EyeSlash } from '@phosphor-icons/react';
 import { supabase } from '@/lib/supabase';
 import { SALAS, SalaId } from '@/lib/salas';
 import { Pergunta } from '@/types/pergunta';
@@ -70,25 +71,62 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
-      <div className="max-w-lg mx-auto px-5 py-8">
+      <div className="max-w-lg mx-auto px-5 py-10">
 
-        {/* Header com animação de entrada */}
+        {/* Logo + Header */}
         <motion.div
-          initial={{ opacity: 0, y: -16 }}
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, ease: 'easeOut' }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
           className="mb-8"
         >
-          <p className="text-xs font-medium text-[#6abf4a] uppercase tracking-widest mb-1">EBD</p>
-          <h1 className="text-2xl font-semibold text-[#f0f0f0]">Perguntas</h1>
-          <p className="text-sm text-[#555] mt-1">Anônimo · Sem identificação</p>
+          {/* Logo */}
+          <div className="mb-6">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/favicon.svg"
+              alt="Logo"
+              className="h-8 w-auto opacity-90"
+            />
+          </div>
+
+          {/* Eyebrow */}
+          <p className="text-xs font-semibold text-[#6abf4a] uppercase tracking-widest mb-2">
+            Escola Bíblica Dominical
+          </p>
+
+          {/* Título */}
+          <h1 className="text-3xl font-bold text-[#f0f0f0] leading-tight mb-3">
+            Igreja Presbiteriana<br />da Mooca
+          </h1>
+
+          {/* Parágrafo */}
+          <p className="text-[15px] text-[#888] leading-relaxed">
+            Este é um espaço criado para você. Faça sua pergunta, exponha seu pensamento
+            ou tire sua dúvida durante a aula — sem pressão e sem julgamento.
+            Todas as contribuições são bem-vindas.
+          </p>
+
+          {/* Tag anônimo */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.35, delay: 0.25 }}
+            className="mt-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-full
+              border border-[#f5c542]/30 bg-[#f5c542]/8"
+          >
+            <EyeSlash size={14} weight="duotone" className="text-[#f5c542]" />
+            <span className="text-xs font-medium text-[#f5c542]/90 tracking-wide">
+              100% anônimo — nenhum dado é coletado
+            </span>
+          </motion.div>
         </motion.div>
 
         {/* Form */}
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.1, ease: 'easeOut' }}
+          transition={{ duration: 0.4, delay: 0.15, ease: 'easeOut' }}
           className="flex flex-col gap-4 mb-10"
         >
           <SalaSelector value={sala} onChange={handleSalaChange} />
