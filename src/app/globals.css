@@ -2,12 +2,13 @@
 
 @theme {
   --font-sans: 'Inter', system-ui, sans-serif;
-  --color-accent: #4f46e5;
-  --color-accent-light: #e0e7ff;
-  --color-surface: #ffffff;
-  --color-border: #e5e7eb;
-  --color-text: #111827;
-  --color-muted: #6b7280;
+  --color-accent: #6abf4a;
+  --color-surface: #0a0a0a;
+  --color-surface-2: #141414;
+  --color-surface-3: #1e1e1e;
+  --color-border: #2a2a2a;
+  --color-text: #f0f0f0;
+  --color-muted: #888888;
 }
 
 * {
@@ -18,4 +19,22 @@ body {
   background: var(--color-surface);
   color: var(--color-text);
   font-family: var(--font-sans);
+}
+
+::selection {
+  background: #6abf4a33;
+  color: #f0f0f0;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2a2a2a;
+  border-radius: 2px;
 }

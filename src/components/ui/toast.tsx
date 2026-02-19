@@ -21,10 +21,11 @@ export function Toast({ message, onDone }: ToastProps) {
 
   return (
     <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-50
-      flex items-center gap-2 px-5 py-3 rounded-2xl bg-gray-900 text-white text-sm
-      shadow-lg transition-all duration-300
+      flex items-center gap-2 px-5 py-3 rounded-2xl
+      bg-[#1e1e1e] border border-[#2a2a2a] text-[#e8e8e8] text-sm
+      shadow-xl transition-all duration-300
       ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
-      <CheckCircle size={18} weight="duotone" className="text-green-400" />
+      <CheckCircle size={17} weight="duotone" className="text-[#6abf4a]" />
       {message}
     </div>
   );

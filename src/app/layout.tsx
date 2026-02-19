@@ -7,6 +7,7 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'EBD — Perguntas',
   description: 'Faça perguntas anônimas durante a aula',
+  icons: { icon: '/favicon.svg' },
 };
 
 export default function RootLayout({

@@ -22,22 +22,22 @@ export function QuestionCard({ pergunta }: QuestionCardProps) {
   return (
     <div className={`p-4 rounded-2xl border transition-all duration-300
       ${isDestacada
-        ? 'border-indigo-300 bg-indigo-50 shadow-sm'
-        : 'border-gray-100 bg-white'
+        ? 'border-[#6abf4a44] bg-[#6abf4a0d]'
+        : 'border-[#1e1e1e] bg-[#141414]'
       }
-      ${isRespondida ? 'opacity-50' : 'opacity-100'}
+      ${isRespondida ? 'opacity-40' : 'opacity-100'}
     `}>
       {isDestacada && (
         <div className="flex items-center gap-1.5 mb-2">
-          <Star size={14} weight="duotone" className="text-indigo-500" />
-          <span className="text-xs font-medium text-indigo-600 uppercase tracking-wide">Destaque</span>
+          <Star size={13} weight="duotone" className="text-[#6abf4a]" />
+          <span className="text-xs font-medium text-[#6abf4a] uppercase tracking-wide">Destaque</span>
         </div>
       )}
-      <p className="text-gray-900 text-base leading-relaxed">{pergunta.texto}</p>
+      <p className="text-[#e8e8e8] text-base leading-relaxed">{pergunta.texto}</p>
       <div className="flex items-center justify-between mt-3">
-        <span className="text-xs text-gray-400">{timeAgo(pergunta.created_at)}</span>
+        <span className="text-xs text-[#444]">{timeAgo(pergunta.created_at)}</span>
         {isRespondida && (
-          <CheckCircle size={16} weight="duotone" className="text-green-500" />
+          <CheckCircle size={15} weight="duotone" className="text-[#6abf4a]" />
         )}
       </div>
     </div>

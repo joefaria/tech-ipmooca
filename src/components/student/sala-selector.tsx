@@ -14,10 +14,9 @@ export function SalaSelector({ value, onChange }: SalaSelectorProps) {
       <select
         value={value}
         onChange={(e) => onChange(e.target.value as SalaId)}
-        className="w-full appearance-none px-4 py-3 pr-10 rounded-2xl border border-gray-200
-          bg-white text-gray-900 text-base outline-none cursor-pointer
-          focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100
-          transition-all duration-150"
+        className="w-full appearance-none px-4 py-3 pr-10 rounded-2xl border border-[#2a2a2a]
+          bg-[#141414] text-[#e8e8e8] text-base outline-none cursor-pointer
+          focus:border-[#6abf4a44] transition-colors duration-150"
       >
         <option value="" disabled>Selecione sua sala...</option>
         {SALAS.map((sala) => (
@@ -27,7 +26,7 @@ export function SalaSelector({ value, onChange }: SalaSelectorProps) {
       <CaretDown
         size={18}
         weight="duotone"
-        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+        className="absolute right-4 top-1/2 -translate-y-1/2 text-[#555] pointer-events-none"
       />
     </div>
   );
