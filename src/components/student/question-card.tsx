@@ -1,5 +1,8 @@
 import { CheckCircle, Star } from '@phosphor-icons/react';
 import { Pergunta } from '@/types/pergunta';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -20,26 +23,26 @@ export function QuestionCard({ pergunta }: QuestionCardProps) {
   const isRespondida = pergunta.status === 'respondida';
 
   return (
-    <div className={`p-4 rounded-2xl border transition-all duration-300
-      ${isDestacada
-        ? 'border-[#6abf4a44] bg-[#6abf4a0d]'
-        : 'border-[#1e1e1e] bg-[#141414]'
-      }
-      ${isRespondida ? 'opacity-40' : 'opacity-100'}
-    `}>
-      {isDestacada && (
-        <div className="flex items-center gap-1.5 mb-2">
-          <Star size={13} weight="duotone" className="text-[#6abf4a]" />
-          <span className="text-xs font-medium text-[#6abf4a] uppercase tracking-wide">Destaque</span>
-        </div>
-      )}
-      <p className="text-[#e8e8e8] text-base leading-relaxed">{pergunta.texto}</p>
-      <div className="flex items-center justify-between mt-3">
-        <span className="text-xs text-[#444]">{timeAgo(pergunta.created_at)}</span>
-        {isRespondida && (
-          <CheckCircle size={15} weight="duotone" className="text-[#6abf4a]" />
+    <Card className={cn(
+      'transition-all duration-300',
+      isDestacada && 'border-primary/30 bg-primary/5',
+      isRespondida && 'opacity-40'
+    )}>
+      <CardContent className="pt-4">
+        {isDestacada && (
+          <Badge variant="outline" className="mb-2 gap-1 border-primary/40 text-primary">
+            <Star size={11} weight="duotone" />
+            Destaque
+          </Badge>
         )}
-      </div>
-    </div>
+        <p className="text-sm leading-relaxed">{pergunta.texto}</p>
+        <div className="flex items-center justify-between mt-3">
+          <span className="text-xs text-muted-foreground">{timeAgo(pergunta.created_at)}</span>
+          {isRespondida && (
+            <CheckCircle size={14} weight="duotone" className="text-primary" />
+          )}
+        </div>
+      </CardContent>
+    </Card>
   );
 }
