@@ -1,7 +1,14 @@
 'use client';
 
-import { CaretDown, WifiHigh } from '@phosphor-icons/react';
+import { WifiHigh } from '@phosphor-icons/react';
 import { SALAS, SalaId } from '@/lib/salas';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface MonitorHeaderProps {
   sala: SalaId;
@@ -11,33 +18,25 @@ interface MonitorHeaderProps {
 
 export function MonitorHeader({ sala, connected, onSalaChange }: MonitorHeaderProps) {
   return (
-    <div className="flex items-center justify-between gap-4 py-4 px-5 border-b border-[#1e1e1e] bg-[#0a0a0a] sticky top-0 z-10">
+    <div className="flex items-center justify-between gap-4 py-4 px-5 border-b bg-background sticky top-0 z-10">
       <div className="flex items-center gap-2.5">
-        <span className="font-semibold text-[#e8e8e8]">Monitor EBD</span>
+        <span className="font-semibold text-sm">Monitor EBD</span>
         <WifiHigh
-          size={15}
+          size={14}
           weight="duotone"
-          className={`transition-colors duration-500 ${connected ? 'text-[#6abf4a]' : 'text-[#333]'}`}
+          className={`transition-colors duration-500 ${connected ? 'text-primary' : 'text-muted-foreground/30'}`}
         />
       </div>
-      <div className="relative">
-        <select
-          value={sala}
-          onChange={(e) => onSalaChange(e.target.value as SalaId)}
-          className="appearance-none pl-3 pr-8 py-2 rounded-xl border border-[#2a2a2a]
-            bg-[#141414] text-sm text-[#ccc] outline-none cursor-pointer
-            focus:border-[#6abf4a44] transition-colors duration-150"
-        >
+      <Select value={sala} onValueChange={(v) => onSalaChange(v as SalaId)}>
+        <SelectTrigger className="w-[160px] h-8 text-sm">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
           {SALAS.map((s) => (
-            <option key={s.id} value={s.id}>{s.label}</option>
+            <SelectItem key={s.id} value={s.id}>{s.label}</SelectItem>
           ))}
-        </select>
-        <CaretDown
-          size={13}
-          weight="duotone"
-          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#555] pointer-events-none"
-        />
-      </div>
+        </SelectContent>
+      </Select>
     </div>
   );
 }
