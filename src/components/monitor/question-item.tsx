@@ -3,6 +3,21 @@
 import { useState } from 'react';
 import { Star, CheckCircle, Trash, ArrowCounterClockwise } from '@phosphor-icons/react';
 import { Pergunta, PerguntaStatus } from '@/types/pergunta';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { cn } from '@/lib/utils';
 
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -21,7 +36,6 @@ interface QuestionItemProps {
 }
 
 export function QuestionItem({ pergunta, onStatusChange, onDelete }: QuestionItemProps) {
-  const [confirmDelete, setConfirmDelete] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const isDestacada = pergunta.status === 'destacada';
@@ -33,98 +47,104 @@ export function QuestionItem({ pergunta, onStatusChange, onDelete }: QuestionIte
   }
 
   return (
-    <div className={`p-4 rounded-2xl border transition-all duration-200
-      ${isDestacada
-        ? 'border-[#6abf4a44] bg-[#6abf4a0d]'
-        : 'border-[#2a2a2a] bg-[#141414]'
-      }
-      ${isRespondida ? 'opacity-30' : 'opacity-100'}
-    `}>
-      {isDestacada && (
-        <div className="flex items-center gap-1.5 mb-2">
-          <Star size={13} weight="duotone" className="text-[#6abf4a]" />
-          <span className="text-xs font-semibold text-[#6abf4a] uppercase tracking-wider">Destaque</span>
-        </div>
-      )}
+    <Card className={cn(
+      'transition-all duration-200',
+      isDestacada && 'border-primary/30 bg-primary/5',
+      isRespondida && 'opacity-30'
+    )}>
+      <CardContent className="pt-4">
+        {isDestacada && (
+          <Badge variant="outline" className="mb-2 gap-1 border-primary/40 text-primary">
+            <Star size={11} weight="duotone" />
+            Destaque
+          </Badge>
+        )}
 
-      <p className="text-[#e8e8e8] text-base leading-relaxed mb-3">{pergunta.texto}</p>
+        <p className="text-sm leading-relaxed mb-3">{pergunta.texto}</p>
 
-      <div className="flex items-center justify-between">
-        <span className="text-xs text-[#555]">{timeAgo(pergunta.created_at)}</span>
+        <div className="flex items-center justify-between">
+          <span className="text-xs text-muted-foreground">{timeAgo(pergunta.created_at)}</span>
 
-        <div className="flex items-center gap-0.5">
-
-          {/* Marcar respondida */}
-          {!isRespondida && (
-            <button
-              disabled={loading}
-              onClick={() => handle(() => onStatusChange(pergunta.id, 'respondida'))}
-              title="Marcar como respondida"
-              className="p-2 rounded-xl text-[#555] hover:text-[#6abf4a] hover:bg-[#6abf4a11] transition-all duration-150 disabled:opacity-40"
-            >
-              <CheckCircle size={17} weight="duotone" />
-            </button>
-          )}
-
-          {/* Reabrir */}
-          {isRespondida && (
-            <button
-              disabled={loading}
-              onClick={() => handle(() => onStatusChange(pergunta.id, 'pendente'))}
-              title="Reabrir pergunta"
-              className="p-2 rounded-xl text-[#555] hover:text-[#e8e8e8] hover:bg-[#2a2a2a] transition-all duration-150 disabled:opacity-40"
-            >
-              <ArrowCounterClockwise size={17} weight="duotone" />
-            </button>
-          )}
-
-          {/* Destacar / remover destaque */}
-          {!isRespondida && (
-            <button
-              disabled={loading}
-              onClick={() => handle(() => onStatusChange(
-                pergunta.id,
-                isDestacada ? 'pendente' : 'destacada'
-              ))}
-              title={isDestacada ? 'Remover destaque' : 'Destacar'}
-              className={`p-2 rounded-xl transition-all duration-150 disabled:opacity-40
-                ${isDestacada
-                  ? 'text-[#6abf4a] hover:bg-[#6abf4a22]'
-                  : 'text-[#555] hover:text-[#6abf4a] hover:bg-[#6abf4a11]'
-                }`}
-            >
-              <Star size={17} weight="duotone" />
-            </button>
-          )}
-
-          {/* Deletar */}
-          {confirmDelete ? (
-            <div className="flex items-center gap-1 ml-1">
-              <button
+          <div className="flex items-center gap-0.5">
+            {!isRespondida && (
+              <Button
+                variant="ghost"
+                size="icon"
                 disabled={loading}
-                onClick={() => handle(() => onDelete(pergunta.id))}
-                className="px-3 py-1.5 rounded-xl text-xs font-medium bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-all disabled:opacity-40"
+                onClick={() => handle(() => onStatusChange(pergunta.id, 'respondida'))}
+                title="Marcar como respondida"
+                className="h-8 w-8 text-muted-foreground hover:text-primary"
               >
-                Confirmar
-              </button>
-              <button
-                onClick={() => setConfirmDelete(false)}
-                className="px-3 py-1.5 rounded-xl text-xs text-[#555] hover:text-[#888] hover:bg-[#2a2a2a] transition-all"
+                <CheckCircle size={16} weight="duotone" />
+              </Button>
+            )}
+
+            {isRespondida && (
+              <Button
+                variant="ghost"
+                size="icon"
+                disabled={loading}
+                onClick={() => handle(() => onStatusChange(pergunta.id, 'pendente'))}
+                title="Reabrir pergunta"
+                className="h-8 w-8 text-muted-foreground hover:text-foreground"
               >
-                Cancelar
-              </button>
-            </div>
-          ) : (
-            <button
-              onClick={() => setConfirmDelete(true)}
-              title="Deletar"
-              className="p-2 rounded-xl text-[#555] hover:text-red-400 hover:bg-red-500/10 transition-all duration-150"
-            >
-              <Trash size={17} weight="duotone" />
-            </button>
-          )}
+                <ArrowCounterClockwise size={16} weight="duotone" />
+              </Button>
+            )}
+
+            {!isRespondida && (
+              <Button
+                variant="ghost"
+                size="icon"
+                disabled={loading}
+                onClick={() => handle(() => onStatusChange(
+                  pergunta.id,
+                  isDestacada ? 'pendente' : 'destacada'
+                ))}
+                title={isDestacada ? 'Remover destaque' : 'Destacar'}
+                className={cn(
+                  'h-8 w-8',
+                  isDestacada
+                    ? 'text-primary hover:text-primary'
+                    : 'text-muted-foreground hover:text-primary'
+                )}
+              >
+                <Star size={16} weight="duotone" />
+              </Button>
+            )}
+
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  title="Deletar"
+                  className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                >
+                  <Trash size={16} weight="duotone" />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Deletar pergunta?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Esta ação não pode ser desfeita.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => handle(() => onDelete(pergunta.id))}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    Deletar
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
