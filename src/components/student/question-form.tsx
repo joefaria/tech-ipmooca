@@ -29,7 +29,9 @@ export function QuestionForm({ sala }: QuestionFormProps) {
       .insert({ sala, texto: texto.trim() });
 
     setSending(false);
-    if (!error) {
+    if (error) {
+      toast.error('Erro ao enviar pergunta. Tente novamente.');
+    } else {
       setTexto('');
       toast.success('Pergunta enviada!');
     }
