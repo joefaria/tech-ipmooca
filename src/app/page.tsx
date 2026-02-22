@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { EyeSlash } from '@phosphor-icons/react';
+import { EyeSlash, Sun, Moon } from '@phosphor-icons/react';
+import { useTheme } from 'next-themes';
 import { supabase } from '@/lib/supabase';
 import { SALAS, SalaId } from '@/lib/salas';
 import { Pergunta } from '@/types/pergunta';
@@ -16,6 +17,7 @@ export default function HomePage() {
   const [sala, setSala] = useState<SalaId | ''>('');
   const [perguntas, setPerguntas] = useState<Pergunta[]>([]);
   const [mounted, setMounted] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     setMounted(true);
@@ -69,45 +71,47 @@ export default function HomePage() {
     ...perguntas.filter((p) => p.status === 'respondida'),
   ];
 
+  if (!mounted) return null;
+
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
+    <div className="min-h-screen bg-background">
       <div className="max-w-lg mx-auto px-5 py-10">
 
-        {/* Logo + Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: 'easeOut' }}
           className="mb-8"
         >
-          {/* Logo */}
-          <div className="mb-6">
+          <div className="flex items-center justify-between mb-6">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/favicon.svg"
-              alt="Logo"
-              className="h-8 w-auto opacity-90"
-            />
+            <img src="/favicon.svg" alt="Logo" className="h-8 w-auto opacity-90" />
+            <button
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className="p-1.5 rounded-md text-muted-foreground hover:text-foreground transition-colors"
+              title="Alternar tema"
+            >
+              {theme === 'dark'
+                ? <Sun size={16} weight="duotone" />
+                : <Moon size={16} weight="duotone" />
+              }
+            </button>
           </div>
 
-          {/* Eyebrow */}
-          <p className="text-xs font-semibold text-[#6abf4a] uppercase tracking-widest mb-2">
+          <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-2">
             Escola Bíblica Dominical
           </p>
 
-          {/* Título */}
-          <h1 className="text-3xl font-bold text-[#f0f0f0] leading-tight mb-3">
+          <h1 className="text-3xl font-bold text-foreground leading-tight mb-3">
             Igreja Presbiteriana<br />da Mooca
           </h1>
 
-          {/* Parágrafo */}
-          <p className="text-[15px] text-[#888] leading-relaxed">
+          <p className="text-[15px] text-muted-foreground leading-relaxed">
             Este é um espaço criado para você. Faça sua pergunta, exponha seu pensamento
             ou tire sua dúvida durante a aula — sem pressão e sem julgamento.
             Todas as contribuições são bem-vindas.
           </p>
 
-          {/* Tag anônimo */}
           <motion.div
             initial={{ opacity: 0, scale: 0.92 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -122,7 +126,6 @@ export default function HomePage() {
           </motion.div>
         </motion.div>
 
-        {/* Form */}
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
@@ -133,7 +136,6 @@ export default function HomePage() {
           <QuestionForm sala={sala} />
         </motion.div>
 
-        {/* Feed */}
         <AnimatePresence>
           {sala && (
             <motion.div
@@ -141,14 +143,14 @@ export default function HomePage() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3, delay: 0.15 }}
             >
-              <p className="text-sm font-medium text-[#555] mb-4">
+              <p className="text-sm font-medium text-muted-foreground/60 mb-4">
                 Perguntas desta sala
                 {perguntas.length > 0 && (
                   <motion.span
                     key={perguntas.length}
                     initial={{ scale: 1.3, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
-                    className="ml-2 text-[#444]"
+                    className="ml-2 text-muted-foreground/40"
                   >
                     ({perguntas.length})
                   </motion.span>
@@ -162,7 +164,7 @@ export default function HomePage() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="text-center text-[#444] text-sm py-12"
+                    className="text-center text-muted-foreground/40 text-sm py-12"
                   >
                     Nenhuma pergunta ainda.<br />Seja o primeiro!
                   </motion.p>
