@@ -68,7 +68,7 @@ export function QuestionForm({ sala }: QuestionFormProps) {
         href="/professor"
         className="block text-center text-xs text-muted-foreground/50 hover:text-muted-foreground transition-colors py-1"
       >
-        acesso do professor
+        Acesso do Professor
       </Link>
     </form>
   );
