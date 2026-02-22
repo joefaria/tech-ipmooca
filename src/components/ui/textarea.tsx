@@ -1,29 +1,18 @@
-import { TextareaHTMLAttributes } from 'react';
+import * as React from "react"
 
-interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
-  charCount?: number;
-  maxChars?: number;
-}
+import { cn } from "@/lib/utils"
 
-export function Textarea({ charCount, maxChars = 500, className = '', ...props }: TextareaProps) {
-  const nearLimit = charCount !== undefined && charCount > maxChars * 0.8;
-
+function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
   return (
-    <div className="relative">
-      <textarea
-        className={`w-full min-h-[120px] px-4 py-3 rounded-2xl border border-gray-200
-          bg-gray-50 text-gray-900 text-base resize-none outline-none
-          focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-100
-          placeholder:text-gray-400 transition-all duration-150 ${className}`}
-        maxLength={maxChars}
-        {...props}
-      />
-      {charCount !== undefined && (
-        <span className={`absolute bottom-3 right-4 text-xs tabular-nums transition-colors
-          ${nearLimit ? 'text-amber-500' : 'text-gray-400'}`}>
-          {maxChars - charCount}
-        </span>
+    <textarea
+      data-slot="textarea"
+      className={cn(
+        "border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+        className
       )}
-    </div>
-  );
+      {...props}
+    />
+  )
 }
+
+export { Textarea }
