@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { PaperPlaneTilt } from '@phosphor-icons/react';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
@@ -62,6 +63,13 @@ export function QuestionForm({ sala }: QuestionFormProps) {
         <PaperPlaneTilt size={16} weight="duotone" />
         {sending ? 'Enviando...' : 'Enviar'}
       </Button>
+
+      <Link
+        href="/professor"
+        className="block text-center text-xs text-muted-foreground/50 hover:text-muted-foreground transition-colors py-1"
+      >
+        acesso do professor
+      </Link>
     </form>
   );
 }
