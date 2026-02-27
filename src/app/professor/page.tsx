@@ -9,6 +9,7 @@ import { Pergunta, PerguntaStatus } from '@/types/pergunta';
 import { autenticar, PROFESSOR_STORAGE_KEY, SessaoProfessor } from '@/lib/professores';
 import { MonitorHeader } from '@/components/monitor/monitor-header';
 import { QuestionItem } from '@/components/monitor/question-item';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
@@ -60,6 +61,13 @@ function LoginPage({ onLogin }: { onLogin: (sessao: SessaoProfessor) => void }) 
             Entrar
           </Button>
         </form>
+
+        <Link
+          href="/"
+          className="block text-center text-xs text-muted-foreground/50 hover:text-muted-foreground transition-colors py-1 mt-3"
+        >
+          Voltar à visão do aluno
+        </Link>
       </motion.div>
     </div>
   );

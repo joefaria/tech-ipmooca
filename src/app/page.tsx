@@ -19,7 +19,7 @@ export default function HomePage() {
   const [perguntas, setPerguntas] = useState<Pergunta[]>([]);
   const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const { theme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
 
   useEffect(() => {
     setMounted(true);
@@ -102,11 +102,11 @@ export default function HomePage() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/favicon.svg" alt="Logo" className="h-8 w-auto opacity-90" />
             <button
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
               className="p-1.5 rounded-md text-muted-foreground hover:text-foreground transition-colors"
               title="Alternar tema"
             >
-              {theme === 'dark'
+              {resolvedTheme === 'dark'
                 ? <Sun size={16} weight="duotone" />
                 : <Moon size={16} weight="duotone" />
               }
