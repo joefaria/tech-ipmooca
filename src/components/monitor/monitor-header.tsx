@@ -29,7 +29,7 @@ export function MonitorHeader({
   onSalaChange,
   onLogout,
 }: MonitorHeaderProps) {
-  const { theme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
 
   return (
     <div className="flex items-center justify-between gap-4 py-4 px-5 border-b bg-background sticky top-0 z-10">
@@ -66,10 +66,10 @@ export function MonitorHeader({
           variant="ghost"
           size="icon"
           className="h-8 w-8"
-          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
           title="Alternar tema"
         >
-          {theme === 'dark' ? (
+          {resolvedTheme === 'dark' ? (
             <Sun size={15} weight="duotone" />
           ) : (
             <Moon size={15} weight="duotone" />
