@@ -26,12 +26,11 @@ export function QuestionForm({ sala, onCreated }: QuestionFormProps) {
     e.preventDefault();
     if (!sala || !texto.trim() || sending) return;
 
+    const textoTrimmed = texto.trim();
     setSending(true);
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('perguntas')
-      .insert({ sala, texto: texto.trim() })
-      .select()
-      .single();
+      .insert({ sala, texto: textoTrimmed });
 
     setSending(false);
     if (error) {
@@ -39,7 +38,13 @@ export function QuestionForm({ sala, onCreated }: QuestionFormProps) {
     } else {
       setTexto('');
       toast.success('Pergunta enviada!');
-      if (data) onCreated(data as Pergunta);
+      onCreated({
+        id: `temp-${Date.now()}`,
+        sala: sala as string,
+        texto: textoTrimmed,
+        status: 'pendente',
+        created_at: new Date().toISOString(),
+      });
     }
   }
 

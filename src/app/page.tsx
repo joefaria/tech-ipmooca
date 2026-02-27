@@ -58,11 +58,15 @@ export default function HomePage() {
         filter: `sala=eq.${sala}`,
       }, (payload) => {
         if (payload.eventType === 'INSERT') {
-          setPerguntas((prev) =>
-            prev.some((p) => p.id === (payload.new as Pergunta).id)
-              ? prev
-              : [payload.new as Pergunta, ...prev]
-          );
+          const newQ = payload.new as Pergunta;
+          setPerguntas((prev) => {
+            // Replace matching temp-optimistic entry, or prepend if not present
+            const withoutTemp = prev.filter(
+              (p) => !(p.id.startsWith('temp-') && p.texto === newQ.texto)
+            );
+            if (withoutTemp.some((p) => p.id === newQ.id)) return withoutTemp;
+            return [newQ, ...withoutTemp];
+          });
         } else if (payload.eventType === 'UPDATE') {
           setPerguntas((prev) =>
             prev.map((p) => p.id === payload.new.id ? payload.new as Pergunta : p)
