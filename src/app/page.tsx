@@ -123,7 +123,7 @@ export default function HomePage() {
 
           <p className="text-[15px] text-muted-foreground leading-relaxed">
             Este é um espaço criado para você. Faça sua pergunta, exponha seu pensamento
-            ou tire sua dúvida durante a aula — sem pressão e sem julgamento.
+            ou tire sua dúvida durante a aula. Sem pressão, sem julgamento.
             Todas as contribuições são bem-vindas.
           </p>
 
@@ -132,11 +132,11 @@ export default function HomePage() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.35, delay: 0.25 }}
             className="mt-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-full
-              border border-[#f5c542]/30 bg-[#f5c542]/8"
+              border border-amber-500/40 bg-amber-500/8 dark:border-[#f5c542]/30 dark:bg-[#f5c542]/8"
           >
-            <EyeSlash size={14} weight="duotone" className="text-[#f5c542]" />
-            <span className="text-xs font-medium text-[#f5c542]/90 tracking-wide">
-              100% anônimo — nenhum dado é coletado
+            <EyeSlash size={14} weight="duotone" className="text-amber-600 dark:text-[#f5c542]" />
+            <span className="text-xs font-medium text-amber-700 dark:text-[#f5c542]/90 tracking-wide">
+              Totalmente anônimo. Nenhum dado é coletado.
             </span>
           </motion.div>
         </motion.div>

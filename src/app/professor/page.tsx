@@ -3,7 +3,18 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
-import { updatePerguntaStatus, deletePergunta } from '@/app/actions';
+import { updatePerguntaStatus, deletePergunta, deleteAllPerguntas } from '@/app/actions';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { SALAS, SalaId } from '@/lib/salas';
 import { Pergunta, PerguntaStatus } from '@/types/pergunta';
 import { autenticar, PROFESSOR_STORAGE_KEY, SessaoProfessor } from '@/lib/professores';
@@ -95,6 +106,33 @@ function MonitorPage({
     setTimeout(() => setReconnecting(false), 1500);
   }
 
+  function playNotificationSound() {
+    try {
+      const ctx = new AudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(660, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.08);
+      gain.gain.setValueAtTime(0.12, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.4);
+    } catch {}
+  }
+
+  async function handleReset() {
+    try {
+      await deleteAllPerguntas(sala);
+      setPerguntas([]);
+      toast.success('Sala limpa com sucesso.');
+    } catch {
+      toast.error('Erro ao limpar a sala. Tente novamente.');
+    }
+  }
+
   useEffect(() => {
     setPerguntas([]);
 
@@ -114,6 +152,7 @@ function MonitorPage({
         filter: `sala=eq.${sala}`,
       }, (payload) => {
         if (payload.eventType === 'INSERT') {
+          playNotificationSound();
           setPerguntas((prev) => [payload.new as Pergunta, ...prev]);
         } else if (payload.eventType === 'UPDATE') {
           setPerguntas((prev) =>
@@ -135,6 +174,9 @@ function MonitorPage({
     setPerguntas((prev) => prev.map((p) => p.id === id ? { ...p, status } : p));
     try {
       await updatePerguntaStatus(id, status);
+      if (status === 'destacada') toast.success('Pergunta destacada.');
+      else if (status === 'respondida') toast.success('Pergunta marcada como respondida.');
+      else toast.success('Pergunta atualizada.');
     } catch {
       setPerguntas(anterior);
       toast.error('Erro ao atualizar. Tente novamente.');
@@ -146,6 +188,7 @@ function MonitorPage({
     setPerguntas((prev) => prev.filter((p) => p.id !== id));
     try {
       await deletePergunta(id);
+      toast.success('Pergunta apagada.');
     } catch {
       setPerguntas(anterior);
       toast.error('Erro ao deletar. Tente novamente.');
@@ -169,6 +212,32 @@ function MonitorPage({
       />
 
       <div className="max-w-2xl mx-auto px-5 py-6 flex flex-col gap-3">
+        {sessao.isAdmin && perguntas.length > 0 && (
+          <div className="flex justify-end">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <button className="text-xs text-muted-foreground/40 hover:text-destructive transition-colors">
+                  Limpar sala
+                </button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Limpar todas as perguntas?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Isso vai apagar permanentemente todas as perguntas desta sala. Essa ação não pode ser desfeita.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleReset}>
+                    Sim, limpar
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        )}
+
         {!connected && (
           <div className="text-center">
             <button

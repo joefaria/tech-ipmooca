@@ -2,12 +2,18 @@
 
 App de perguntas anônimas para a Escola Bíblica Dominical da Igreja Presbiteriana da Mooca.
 
+## Workflow obrigatório antes de qualquer push
+
+1. `npm run build` — deve passar sem erros
+2. Testar no `localhost:3000` e confirmar que está correto
+3. Somente então fazer commit + `git subtree push`
+
 ## Rodando localmente
 
 ```bash
 cd /Users/jonatasfaria/astra/projetos/perguntas-ebd
 npm run dev        # http://localhost:3000
-npm run build      # build de produção
+npm run build      # build de produção (rodar antes de qualquer push)
 npx tsc --noEmit   # check de tipos
 ```
 

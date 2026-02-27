@@ -20,3 +20,12 @@ export async function deletePergunta(id: string) {
     .eq('id', id);
   if (error) throw new Error(error.message);
 }
+
+export async function deleteAllPerguntas(sala: string) {
+  const supabase = createServerClient();
+  const { error } = await supabase
+    .from('perguntas')
+    .delete()
+    .eq('sala', sala);
+  if (error) throw new Error(error.message);
+}
