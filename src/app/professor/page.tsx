@@ -77,7 +77,15 @@ function MonitorPage({
   const [sala, setSala] = useState<SalaId>(sessao.sala);
   const [perguntas, setPerguntas] = useState<Pergunta[]>([]);
   const [connected, setConnected] = useState(false);
+  const [reconnecting, setReconnecting] = useState(false);
+  const [reconnectKey, setReconnectKey] = useState(0);
   const [showRespondidas, setShowRespondidas] = useState(false);
+
+  function handleReconnect() {
+    setReconnecting(true);
+    setReconnectKey((k) => k + 1);
+    setTimeout(() => setReconnecting(false), 1500);
+  }
 
   useEffect(() => {
     setPerguntas([]);
@@ -103,6 +111,8 @@ function MonitorPage({
           setPerguntas((prev) =>
             prev.map((p) => p.id === payload.new.id ? payload.new as Pergunta : p)
           );
+        } else if (payload.eventType === 'DELETE') {
+          setPerguntas((prev) => prev.filter((p) => p.id !== payload.old?.id));
         }
       })
       .subscribe((status) => {
@@ -110,7 +120,7 @@ function MonitorPage({
       });
 
     return () => { supabase.removeChannel(channel); };
-  }, [sala]);
+  }, [sala, reconnectKey]);
 
   async function handleStatusChange(id: string, status: PerguntaStatus) {
     const anterior = perguntas;
@@ -151,6 +161,17 @@ function MonitorPage({
       />
 
       <div className="max-w-2xl mx-auto px-5 py-6 flex flex-col gap-3">
+        {!connected && (
+          <div className="text-center">
+            <button
+              onClick={handleReconnect}
+              className="text-xs text-amber-400 underline underline-offset-2"
+            >
+              {reconnecting ? 'Reconectando...' : 'Tentar reconectar'}
+            </button>
+          </div>
+        )}
+
         <AnimatePresence mode="wait">
           {ativas.length === 0 && (
             <motion.p
@@ -255,7 +276,7 @@ export default function ProfessorPage() {
     setSessao(null);
   }
 
-  if (!mounted) return null;
+  if (!mounted) return <div className="min-h-screen bg-background" />;
 
   return (
     <AnimatePresence mode="wait">

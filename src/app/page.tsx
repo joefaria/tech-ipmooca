@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { EyeSlash, Sun, Moon } from '@phosphor-icons/react';
 import { useTheme } from 'next-themes';
+import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
 import { SALAS, SalaId } from '@/lib/salas';
 import { Pergunta } from '@/types/pergunta';
@@ -16,6 +17,7 @@ const SALA_STORAGE_KEY = 'ebd-sala-selecionada';
 export default function HomePage() {
   const [sala, setSala] = useState<SalaId | ''>('');
   const [perguntas, setPerguntas] = useState<Pergunta[]>([]);
+  const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
 
@@ -35,12 +37,17 @@ export default function HomePage() {
   useEffect(() => {
     if (!sala) return;
 
+    setLoading(true);
     supabase
       .from('perguntas')
       .select('*')
       .eq('sala', sala)
       .order('created_at', { ascending: false })
-      .then(({ data }) => setPerguntas((data as Pergunta[]) ?? []));
+      .then(({ data, error }) => {
+        if (error) toast.error('Erro ao carregar perguntas.');
+        setPerguntas((data as Pergunta[]) ?? []);
+        setLoading(false);
+      });
 
     const channel = supabase
       .channel(`perguntas-${sala}`)
@@ -51,7 +58,11 @@ export default function HomePage() {
         filter: `sala=eq.${sala}`,
       }, (payload) => {
         if (payload.eventType === 'INSERT') {
-          setPerguntas((prev) => [payload.new as Pergunta, ...prev]);
+          setPerguntas((prev) =>
+            prev.some((p) => p.id === (payload.new as Pergunta).id)
+              ? prev
+              : [payload.new as Pergunta, ...prev]
+          );
         } else if (payload.eventType === 'UPDATE') {
           setPerguntas((prev) =>
             prev.map((p) => p.id === payload.new.id ? payload.new as Pergunta : p)
@@ -71,7 +82,7 @@ export default function HomePage() {
     ...perguntas.filter((p) => p.status === 'respondida'),
   ];
 
-  if (!mounted) return null;
+  if (!mounted) return <div className="min-h-screen bg-background" />;
 
   return (
     <div className="min-h-screen bg-background">
@@ -133,7 +144,7 @@ export default function HomePage() {
           className="flex flex-col gap-4 mb-10"
         >
           <SalaSelector value={sala} onChange={handleSalaChange} />
-          <QuestionForm sala={sala} />
+          <QuestionForm sala={sala} onCreated={(p) => setPerguntas((prev) => [p, ...prev])} />
         </motion.div>
 
         <AnimatePresence>
@@ -158,7 +169,13 @@ export default function HomePage() {
               </p>
 
               <AnimatePresence mode="wait">
-                {perguntas.length === 0 ? (
+                {loading ? (
+                  <div key="skeleton" className="flex flex-col gap-3">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="h-20 rounded-xl bg-card animate-pulse" />
+                    ))}
+                  </div>
+                ) : perguntas.length === 0 ? (
                   <motion.p
                     key="empty"
                     initial={{ opacity: 0 }}

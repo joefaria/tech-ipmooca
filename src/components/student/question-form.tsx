@@ -6,14 +6,16 @@ import { PaperPlaneTilt } from '@phosphor-icons/react';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
 import { SalaId } from '@/lib/salas';
+import { Pergunta } from '@/types/pergunta';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 
 interface QuestionFormProps {
   sala: SalaId | '';
+  onCreated: (p: Pergunta) => void;
 }
 
-export function QuestionForm({ sala }: QuestionFormProps) {
+export function QuestionForm({ sala, onCreated }: QuestionFormProps) {
   const [texto, setTexto] = useState('');
   const [sending, setSending] = useState(false);
 
@@ -25,9 +27,11 @@ export function QuestionForm({ sala }: QuestionFormProps) {
     if (!sala || !texto.trim() || sending) return;
 
     setSending(true);
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('perguntas')
-      .insert({ sala, texto: texto.trim() });
+      .insert({ sala, texto: texto.trim() })
+      .select()
+      .single();
 
     setSending(false);
     if (error) {
@@ -35,6 +39,7 @@ export function QuestionForm({ sala }: QuestionFormProps) {
     } else {
       setTexto('');
       toast.success('Pergunta enviada!');
+      if (data) onCreated(data as Pergunta);
     }
   }
 
